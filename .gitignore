@@ -1,0 +1,16 @@
+# Python
+dbt-env/
+__pycache__/
+*.pyc
+.env
+
+# dbt
+target/
+dbt_packages/
+logs/
+
+# Never commit credentials
+profiles.yml
+
+# Mac
+.DS_Store
