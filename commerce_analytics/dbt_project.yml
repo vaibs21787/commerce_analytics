@@ -1,16 +1,8 @@
-
-# Name your project! Project names should contain only lowercase characters
-# and underscores. A good package name should reflect your organization's
-# name or the intended use of these models
 name: 'commerce_analytics'
 version: '1.0.0'
-
-# This setting configures which "profile" dbt uses for this project.
 profile: 'commerce_analytics'
 
-# These configurations specify where dbt should look for different types of files.
-# The `model-paths` config, for example, states that models in this project can be
-# found in the "models/" directory. You probably won't need to change these!
+# File paths
 model-paths: ["models"]
 analysis-paths: ["analyses"]
 test-paths: ["tests"]
@@ -18,19 +10,33 @@ seed-paths: ["seeds"]
 macro-paths: ["macros"]
 snapshot-paths: ["snapshots"]
 
-clean-targets:         # directories to be removed by `dbt clean`
+clean-targets:
   - "target"
   - "dbt_packages"
 
-
-# Configuring models
-# Full documentation: https://docs.getdbt.com/docs/configuring-models
-
-# In this example config, we tell dbt to build all models in the example/
-# directory as views. These settings can be overridden in the individual model
-# files using the `{{ config(...) }}` macro.
+# Model configurations per layer
 models:
   commerce_analytics:
-    # Config indicated by + and applies to all files under models/example/
-    example:
+
+    # STAGING LAYER
+    # Views are cheap — no storage cost, always fresh
+    staging:
       +materialized: view
+      +schema: staging
+
+    # INTERMEDIATE LAYER  
+    # Ephemeral — not stored in Snowflake, used as CTEs by other models
+    intermediate:
+      +materialized: ephemeral
+
+    # MARTS LAYER
+    marts:
+      core:
+        # Tables — stored permanently, fast for BI tools to query
+        +materialized: table
+        +schema: marts
+
+      reporting:
+        # Tables — final business reports
+        +materialized: table
+        +schema: reporting
