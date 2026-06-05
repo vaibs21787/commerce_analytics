@@ -1,0 +1,31 @@
+version: 2
+
+sources:
+  - name: tpch
+    description: "Raw TPCH data from Snowflake sample dataset - SF1000 scale"
+    database: snowflake_sample_data
+    schema: tpch_sf1000
+    tables:
+      - name: orders
+        description: "All customer orders - 1.5 billion rows"
+
+      - name: lineitem
+        description: "Order line items - 6 billion rows"
+
+      - name: customer
+        description: "Customer master data - 150 million rows"
+
+      - name: part
+        description: "Product/part catalog - 200 million rows"
+
+      - name: supplier
+        description: "Supplier master data - 10 million rows"
+
+      - name: partsupp
+        description: "Part-supplier relationships - 800 million rows"
+
+      - name: nation
+        description: "Country reference data - 25 rows"
+
+      - name: region
+        description: "Region reference data - 5 rows"
