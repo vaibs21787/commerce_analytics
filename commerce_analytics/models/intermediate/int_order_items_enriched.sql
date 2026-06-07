@@ -42,6 +42,9 @@ final as (
 
         -- order context
         o.order_date,
+        date_trunc('month', o.order_date)   as order_month,
+        date_trunc('quarter', o.order_date) as order_quarter,
+        year(o.order_date)                  as order_year,
         o.priority_code,
 
         -- product details
@@ -94,8 +97,8 @@ final as (
             else false
         end as is_late_delivery,
 
-        datediff('day', o.order_date, li.ship_date)     as days_to_ship,
-        datediff('day', o.order_date, li.receipt_date)  as days_to_deliver,
+        datediff('day', o.order_date, li.ship_date)    as days_to_ship,
+        datediff('day', o.order_date, li.receipt_date) as days_to_deliver,
 
         case
             when li.receipt_date > li.commit_date
