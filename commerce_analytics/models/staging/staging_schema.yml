@@ -1,0 +1,213 @@
+version: 2
+
+models:
+  - name: stg_orders
+    description: "Cleaned orders table from TPCH source. One row per order."
+    columns:
+      - name: order_key
+        description: "Primary key - unique identifier for each order"
+        tests:
+          - unique
+          - not_null
+
+      - name: customer_key
+        description: "Foreign key to stg_customers"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_customers')
+              field: customer_key
+
+      - name: status_code
+        description: "Order status - F=Fulfilled, O=Open, P=Pending"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['F', 'O', 'P']
+
+      - name: total_price
+        description: "Total order price before line item discounts"
+        tests:
+          - not_null
+
+      - name: order_date
+        description: "Date the order was placed"
+        tests:
+          - not_null
+
+  - name: stg_customers
+    description: "Cleaned customers table. One row per customer."
+    columns:
+      - name: customer_key
+        description: "Primary key - unique customer identifier"
+        tests:
+          - unique
+          - not_null
+
+      - name: nation_key
+        description: "Foreign key to stg_nation"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_nation')
+              field: nation_key
+
+      - name: market_segment
+        description: "Customer market segment"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['AUTOMOBILE', 'BUILDING',
+                       'FURNITURE', 'MACHINERY', 'HOUSEHOLD']
+
+      - name: account_balance
+        description: "Customer account balance - can be negative"
+        tests:
+          - not_null
+
+  - name: stg_lineitem
+    description: "Cleaned line items table. One row per order line."
+    columns:
+      - name: order_key
+        description: "Foreign key to stg_orders"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_orders')
+              field: order_key
+
+      - name: line_number
+        description: "Line number within order"
+        tests:
+          - not_null
+
+      - name: part_key
+        description: "Foreign key to stg_parts"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_parts')
+              field: part_key
+
+      - name: supplier_key
+        description: "Foreign key to stg_suppliers"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_suppliers')
+              field: supplier_key
+
+      - name: return_flag
+        description: "Return status - R=Returned, A=Accepted, N=Not received"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['R', 'A', 'N']
+
+      - name: line_status
+        description: "Line status - O=Open, F=Fulfilled"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['O', 'F']
+
+      - name: extended_price
+        description: "Price before discount"
+        tests:
+          - not_null
+
+      - name: ship_mode
+        description: "Shipping method used"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['AIR', 'SHIP', 'TRUCK',
+                       'RAIL', 'MAIL', 'FOB', 'REG AIR']
+
+  - name: stg_parts
+    description: "Cleaned parts table. One row per part."
+    columns:
+      - name: part_key
+        description: "Primary key - unique part identifier"
+        tests:
+          - unique
+          - not_null
+
+      - name: retail_price
+        description: "Retail price of the part"
+        tests:
+          - not_null
+
+      - name: manufacturer
+        description: "Part manufacturer"
+        tests:
+          - not_null
+
+  - name: stg_suppliers
+    description: "Cleaned suppliers table. One row per supplier."
+    columns:
+      - name: supplier_key
+        description: "Primary key - unique supplier identifier"
+        tests:
+          - unique
+          - not_null
+
+      - name: nation_key
+        description: "Foreign key to stg_nation"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_nation')
+              field: nation_key
+
+  - name: stg_nation
+    description: "Cleaned nation reference table. One row per nation."
+    columns:
+      - name: nation_key
+        description: "Primary key - unique nation identifier"
+        tests:
+          - unique
+          - not_null
+
+      - name: region_key
+        description: "Foreign key to stg_region"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_region')
+              field: region_key
+
+  - name: stg_region
+    description: "Cleaned region reference table. One row per region."
+    columns:
+      - name: region_key
+        description: "Primary key - unique region identifier"
+        tests:
+          - unique
+          - not_null
+
+      - name: region_name
+        description: "Region name"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['AFRICA', 'AMERICA', 'ASIA',
+                       'EUROPE', 'MIDDLE EAST']
+
+  - name: stg_partsupp
+    description: "Cleaned part-supplier table. One row per part-supplier combo."
+    columns:
+      - name: part_key
+        description: "Part of composite primary key"
+        tests:
+          - not_null
+
+      - name: supplier_key
+        description: "Part of composite primary key"
+        tests:
+          - not_null
+
+      - name: supply_cost
+        description: "Cost to source this part from this supplier"
+        tests:
+          - not_null
