@@ -1,6 +1,20 @@
+{{
+    config(
+        materialized='incremental',
+        unique_key=['order_key', 'line_number'],
+        incremental_strategy='merge'
+    )
+}}
+
 with order_items as (
 
     select * from {{ ref('int_order_items_enriched') }}
+
+    {% if is_incremental() %}
+        where order_date > (
+            select max(order_date) from {{ this }}
+        )
+    {% endif %}
 
 ),
 
@@ -62,7 +76,10 @@ final as (
 
         -- return metrics
         is_returned,
-        revenue_lost_to_returns
+        revenue_lost_to_returns,
+
+        -- audit column
+        current_timestamp() as dbt_updated_at
 
     from order_items
 
