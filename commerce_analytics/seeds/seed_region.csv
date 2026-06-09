@@ -1,0 +1,6 @@
+region_key,region_name,region_description,head_office,currency
+0,AFRICA,Sub-Saharan and North African markets,Johannesburg,USD
+1,AMERICA,North and South American markets,New York,USD
+2,ASIA,Asia Pacific markets,Singapore,USD
+3,EUROPE,European markets,London,EUR
+4,MIDDLE EAST,Middle Eastern markets,Dubai,USD
