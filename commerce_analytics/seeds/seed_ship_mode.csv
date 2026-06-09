@@ -1,0 +1,8 @@
+ship_mode,ship_mode_name,cost_tier,avg_delivery_days,description
+AIR,Air Freight,Premium,2,Fastest shipping method via air cargo
+SHIP,Ocean Freight,Economy,30,Slowest but cheapest via ocean vessel
+TRUCK,Road Freight,Standard,7,Standard ground shipping via truck
+RAIL,Rail Freight,Standard,10,Ground shipping via railway
+MAIL,Mail Service,Budget,14,Standard postal mail service
+FOB,Free On Board,Standard,12,Supplier responsible until port
+REG AIR,Regular Air,Standard,5,Standard air freight service

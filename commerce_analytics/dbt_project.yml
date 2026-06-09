@@ -17,26 +17,23 @@ clean-targets:
 # Model configurations per layer
 models:
   commerce_analytics:
-
-    # STAGING LAYER
-    # Views are cheap — no storage cost, always fresh
     staging:
       +materialized: view
       +schema: staging
-
-    # INTERMEDIATE LAYER  
-    # Ephemeral — not stored in Snowflake, used as CTEs by other models
     intermediate:
       +materialized: ephemeral
-
-    # MARTS LAYER
     marts:
       core:
-        # Tables — stored permanently, fast for BI tools to query
         +materialized: table
         +schema: marts
-
       reporting:
-        # Tables — final business reports
         +materialized: table
         +schema: reporting
+
+# Seed configurations
+seeds:
+  commerce_analytics:
+    +schema: raw
+    +column_types:
+      region_key: integer
+      nation_key: integer

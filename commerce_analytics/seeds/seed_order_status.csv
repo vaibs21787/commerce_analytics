@@ -1,0 +1,4 @@
+status_code,status_name,status_description,display_color
+F,Fulfilled,Order has been completed and delivered,Green
+O,Open,Order is currently being processed,Yellow
+P,Pending,Order is waiting to be processed,Red

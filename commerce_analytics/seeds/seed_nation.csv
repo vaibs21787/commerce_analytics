@@ -1,0 +1,26 @@
+nation_key,nation_name,region_key,iso_code,nation_description
+0,ALGERIA,0,DZ,North African market
+1,ARGENTINA,1,AR,South American market
+2,BRAZIL,1,BR,Largest South American market
+3,CANADA,1,CA,North American market
+4,EGYPT,4,EG,North African and Middle Eastern market
+5,ETHIOPIA,0,ET,East African market
+6,FRANCE,3,FR,Western European market
+7,GERMANY,3,DE,Central European market
+8,INDIA,2,IN,South Asian market
+9,INDONESIA,2,ID,Southeast Asian market
+10,IRAN,4,IR,Middle Eastern market
+11,IRAQ,4,IQ,Middle Eastern market
+12,JAPAN,2,JP,East Asian market
+13,JORDAN,4,JO,Middle Eastern market
+14,KENYA,0,KE,East African market
+15,MOROCCO,0,MA,North African market
+16,MOZAMBIQUE,0,MZ,Southern African market
+17,PERU,1,PE,South American market
+18,CHINA,2,CN,East Asian market
+19,ROMANIA,3,RO,Eastern European market
+20,SAUDI ARABIA,4,SA,Middle Eastern market
+21,VIETNAM,2,VN,Southeast Asian market
+22,RUSSIA,3,RU,Eastern European market
+23,UNITED KINGDOM,3,GB,Western European market
+24,UNITED STATES,1,US,North American market
