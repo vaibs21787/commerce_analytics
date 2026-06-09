@@ -1,6 +1,96 @@
+# commerce_analytics
+
+End-to-end analytics engineering project built with dbt Core and Snowflake, processing 6 billion+ rows of B2B supply chain data.
+
 ---
 
-## 📋 Business Use Cases
+## Project Overview
+
+GlobalTrade Inc. is a B2B supply chain company operating across 5 global regions. This project builds a complete data warehouse covering revenue, customer, delivery, returns, supplier and product analytics.
+
+**Scale:**
+- 6 billion line items
+- 1.5 billion orders
+- 150 million customers
+- 200 million products
+- 10 million suppliers
+
+---
+
+## Architecture
+
+![Lineage Graph](assets/lineage_graph.png)
+
+    RAW DATA (Snowflake Sample Data - TPCH SF1000)
+             ↓
+    STAGING LAYER (8 models - views)
+    → Clean and rename raw tables
+             ↓
+    INTERMEDIATE LAYER (3 models - ephemeral)
+    → Reusable business logic and joins
+             ↓
+    MARTS/CORE (5 models - tables)
+    → Dimensions and facts (star schema)
+             ↓
+    MARTS/REPORTING (6 models - tables)
+    → Business KPIs and use cases
+
+---
+
+## Project Structure
+
+    commerce_analytics/
+    ├── models/
+    │   ├── staging/
+    │   │   ├── sources.yml
+    │   │   ├── staging_schema.yml
+    │   │   ├── stg_orders.sql
+    │   │   ├── stg_customers.sql
+    │   │   ├── stg_lineitem.sql
+    │   │   ├── stg_parts.sql
+    │   │   ├── stg_suppliers.sql
+    │   │   ├── stg_partsupp.sql
+    │   │   ├── stg_nation.sql
+    │   │   └── stg_region.sql
+    │   ├── intermediate/
+    │   │   ├── int_orders_with_customers.sql
+    │   │   ├── int_order_items_enriched.sql
+    │   │   └── int_suppliers_with_geography.sql
+    │   └── marts/
+    │       ├── core/
+    │       │   ├── core_schema.yml
+    │       │   ├── dim_customers.sql
+    │       │   ├── dim_parts.sql
+    │       │   ├── dim_suppliers.sql
+    │       │   ├── fct_orders.sql
+    │       │   └── fct_order_items.sql
+    │       └── reporting/
+    │           ├── rpt_revenue_analysis.sql
+    │           ├── rpt_customer_analysis.sql
+    │           ├── rpt_delivery_performance.sql
+    │           ├── rpt_return_analysis.sql
+    │           ├── rpt_supplier_performance.sql
+    │           └── rpt_product_analysis.sql
+    ├── macros/
+    │   ├── generate_schema_name.sql
+    │   ├── get_balance_segment.sql
+    │   └── get_part_type_component.sql
+    ├── seeds/
+    │   ├── seed_region.csv
+    │   ├── seed_nation.csv
+    │   ├── seed_order_status.csv
+    │   └── seed_ship_mode.csv
+    ├── tests/
+    │   ├── assert_positive_revenue.sql
+    │   ├── assert_valid_dates.sql
+    │   └── assert_discount_range.sql
+    ├── setup/
+    │   └── snowflake_setup.sql
+    └── dbt_project.yml
+
+---
+
+## Business Use Cases
 
 | Report | Business Question | Rows |
 |--------|------------------|------|
@@ -13,11 +103,11 @@
 
 ---
 
-## 🔑 Key KPIs
+## Key KPIs
 
 **Revenue:**
-- Net Revenue = extended_price × (1 - discount)
-- Gross Revenue = net_revenue × (1 + tax)
+- Net Revenue = extended_price x (1 - discount)
+- Gross Revenue = net_revenue x (1 + tax)
 - Profit Margin = net_revenue - supply_cost
 - Average Order Value = revenue / order count
 
@@ -34,23 +124,23 @@
 
 ---
 
-## 🧪 Data Quality
+## Data Quality
 
-**84 tests total — all passing:**
+84 tests total, all passing:
 - 48 staging tests
 - 36 marts core tests
 - 3 custom singular tests
 
-**Test types:**
-- `unique` — no duplicate primary keys
-- `not_null` — no missing critical values
-- `accepted_values` — valid status codes
-- `relationships` — referential integrity
+Test types:
+- unique - no duplicate primary keys
+- not_null - no missing critical values
+- accepted_values - valid status codes
+- relationships - referential integrity
 - Custom: positive revenue, valid dates, discount range
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Tool | Purpose |
 |------|---------|
@@ -61,51 +151,46 @@
 
 ---
 
-## 🚀 How to Run
+## How to Run
 
-**1. Clone the repo**
-```bash
-git clone https://github.com/vaibs21787/commerce_analytics.git
-cd commerce_analytics
-```
+1. Clone the repo
 
-**2. Set up environment**
-```bash
-conda create -n dbt-env python=3.11 pip -y
-conda activate dbt-env
-pip install -r requirements.txt
-```
+        git clone https://github.com/vaibs21787/commerce_analytics.git
+        cd commerce_analytics
 
-**3. Configure Snowflake connection**
-```bash
-# Edit ~/.dbt/profiles.yml with your credentials
-# Run Snowflake setup script first:
-# setup/snowflake_setup.sql
-```
+2. Set up environment
 
-**4. Run the project**
-```bash
-dbt seed          # Load reference data
-dbt run           # Build all models
-dbt test          # Run all 84 tests
-dbt docs generate # Generate documentation
-dbt docs serve    # View lineage graph
-```
+        conda create -n dbt-env python=3.11 pip -y
+        conda activate dbt-env
+        pip install -r requirements.txt
+
+3. Configure Snowflake connection
+
+        Edit ~/.dbt/profiles.yml with your credentials
+        Run setup/snowflake_setup.sql as ACCOUNTADMIN first
+
+4. Run the project
+
+        dbt seed          - Load reference data
+        dbt run           - Build all models
+        dbt test          - Run all 84 tests
+        dbt docs generate - Generate documentation
+        dbt docs serve    - View lineage graph
 
 ---
 
-## 📁 Snowflake Setup
+## Snowflake Setup
 
-Run `setup/snowflake_setup.sql` as ACCOUNTADMIN to create:
-- Role: `dbt_role`
-- Warehouse: `dbt_wh`
-- Database: `commerce_analytics`
-- Schemas: `raw`, `staging`, `intermediate`, `marts`, `reporting`
+Run setup/snowflake_setup.sql as ACCOUNTADMIN to create:
+- Role: dbt_role
+- Warehouse: dbt_wh
+- Database: commerce_analytics
+- Schemas: raw, staging, intermediate, marts, reporting
 
 ---
 
-## 👩‍💻 Author
+## Author
 
-**Vaibhavi Shah**
+Vaibhavi Shah
 Analytics Engineer
-[GitHub](https://github.com/vaibs21787)
+GitHub: https://github.com/vaibs21787
