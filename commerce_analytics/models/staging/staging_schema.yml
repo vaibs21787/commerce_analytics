@@ -67,6 +67,10 @@ models:
 
   - name: stg_lineitem
     description: "Cleaned line items table. One row per order line."
+    tests:
+      - dbt_expectations.expect_table_row_count_to_be_between:
+          min_value: 5000000000
+          max_value: 7000000000
     columns:
       - name: order_key
         description: "Foreign key to stg_orders"
@@ -115,6 +119,22 @@ models:
         description: "Price before discount"
         tests:
           - not_null
+
+      - name: discount_percentage
+        description: "Discount applied - between 0 and 0.10"
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 0.10
+
+      - name: quantity
+        description: "Units ordered - must be positive"
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 1
+              max_value: 50
 
       - name: ship_mode
         description: "Shipping method used"
@@ -196,6 +216,11 @@ models:
 
   - name: stg_partsupp
     description: "Cleaned part-supplier table. One row per part-supplier combo."
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - part_key
+            - supplier_key
     columns:
       - name: part_key
         description: "Part of composite primary key"
