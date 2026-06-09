@@ -1,0 +1,58 @@
+name: dbt Production
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  dbt-prod:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install dbt-core dbt-snowflake
+
+      - name: Create profiles.yml
+        run: |
+          mkdir -p ~/.dbt
+          cat > ~/.dbt/profiles.yml << PROFILE
+          commerce_analytics:
+            target: dev
+            outputs:
+              dev:
+                type: snowflake
+                account: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+                user: ${{ secrets.SNOWFLAKE_USER }}
+                password: ${{ secrets.SNOWFLAKE_PASSWORD }}
+                role: ${{ secrets.SNOWFLAKE_ROLE }}
+                warehouse: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
+                database: ${{ secrets.SNOWFLAKE_DATABASE }}
+                schema: ${{ secrets.SNOWFLAKE_SCHEMA }}
+                threads: 4
+          PROFILE
+
+      - name: Install dbt packages
+        working-directory: commerce_analytics
+        run: dbt deps
+
+      - name: dbt seed
+        working-directory: commerce_analytics
+        run: dbt seed
+
+      - name: dbt run staging
+        working-directory: commerce_analytics
+        run: dbt run -s staging
+
+      - name: dbt test
+        working-directory: commerce_analytics
+        run: dbt test -s staging
